@@ -1,0 +1,82 @@
+body {
+  background: black;
+  font-family: monospace;
+  line-height: 1.5;
+  color: green;
+  font-size: 14px;
+  margin: 20px auto;
+  width: 800px;
+}
+
+h1 { font-size: 25px; }
+h2 { font-size: 20px; }
+h3 { font-size: 15px; }
+
+$tile-size: 25px;
+
+.player {
+  float: left;
+  box-sizing: border-box;
+  padding: 20px;
+  width: 50%;
+
+  .grid {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    .grid {
+      opacity: 1;
+      pointer-events: all;
+      cursor: default;
+    }
+  }
+}
+
+.row {
+  line-height: 0;
+}
+
+.tile {
+  display: inline-block;
+  position: relative;
+  width: $tile-size;
+  height: $tile-size;
+  margin: 1px;
+  border: 1px solid green;
+  overflow: hidden;
+  cursor: pointer;
+
+  &:hover {
+    border-color: white;
+  }
+
+  &.hit {
+    color: red;
+  }
+
+  .tile-status {
+    position: absolute;
+    left: 0;
+    width: $tile-size;
+    line-height: $tile-size;
+    text-align: center;
+    font-size: 15px;
+  }
+}
+
+.status {
+  color: #AAA;
+  height: 80px;
+  margin: 1em 0;
+}
+
+.gameplay-instructions {
+  line-height: 2em;
+}
+
+.options {
+  color: #AAA;
+}

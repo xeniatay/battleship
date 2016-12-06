@@ -1,2 +1,4 @@
-import Hello from './hello.jsx';
-import World from './world.jsx';
+import reset from '../css/reset.scss'
+import styles from '../css/main.scss'
+
+import Battleship from './battleship.jsx'
