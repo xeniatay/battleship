@@ -16,9 +16,9 @@ const SHIPS = [
   //   id: 'cruiser',
   //   length: 3
   // }, {
-    id: 'submarine',
-    length: 3,
-  }, {
+  //   id: 'submarine',
+  //   length: 3,
+  // }, {
     id: 'destroyer',
     length: 2
   }

@@ -130,23 +130,27 @@ export default class Grid extends React.Component {
    */
   placeShip(x, y, ship) {
     const grid = _.clone(this.state.grid)
-    ship = _.extend(ship, {
+    const placedShip = {
       x,
-      y
-    })
-    const points = this.ships.getPoints(ship)
+      y,
+      id: ship.id,
+      length: ship.length,
+      direction: ship.direction
+    }
+    const points = this.ships.getPoints(placedShip)
 
     _.each(points, (p) => {
       grid[p.x][p.y] = this.buildTile({
-        id: ship.id,
+        id: placedShip.id,
         x: p.x,
         y: p.y
       })
     })
 
+    this.ships.add(placedShip)
+
     this.setState({
-      grid,
-      ships: this.ships.add(ship)
+      grid
     })
   }
 

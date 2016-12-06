@@ -7,7 +7,7 @@ const VERTICAL = 1
 
 export default class Ships {
   constructor(player) {
-    this.ships = []
+    this.ships = {}
     this.player = player
   }
 
@@ -16,7 +16,7 @@ export default class Ships {
    * @return {array}
    */
   add(ship) {
-    return this.ships.push(ship)
+    this.ships[ship.id] = ship
   }
 
   /**
@@ -24,7 +24,15 @@ export default class Ships {
    * @return {object}
    */
   get(id) {
-    return _.findWhere(this.ships, {id})
+    return this.ships[id]
+  }
+
+  /**
+   * Set a ship
+   * @return {object}
+   */
+  set(ship) {
+    this.ships[ship.id] = ship
   }
 
   /**
@@ -43,11 +51,9 @@ export default class Ships {
    */
   update(id, data) {
     let shipToUpdate = this.get(id)
-    const index = _.findIndex(shipToUpdate)
 
     shipToUpdate = _.extend(shipToUpdate, data)
-
-    this.ships[index] = shipToUpdate
+    this.set(shipToUpdate)
   }
 
   /**
