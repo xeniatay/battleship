@@ -6,7 +6,7 @@ Go to [http://xeniatay.com/battleship/](http://xeniatay.com/battleship/)!
 
 To run locally: 
 
-    // In the root directory of `battleship`
+    // In the root directory of battleship
     > npm install
     > webpack-dev-server --progress --colors
 
@@ -40,9 +40,9 @@ Unfortunately, I was unable to get Jest set up to run with the webpack/ES6 confi
 
 Below are the test cases I considered:
 
-#### Test cases
+### Test cases
 
-##### Battleship
+#### Battleship
 - Switch turns between players
 - Player 1 cannot play when Player 2 is active
 
