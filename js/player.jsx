@@ -18,7 +18,7 @@ export default class Player extends React.Component {
 
   render() {
     const className = ClassNames('player', {
-      'active': true // this.props.active
+      'active': this.props.active
     })
 
     return (
