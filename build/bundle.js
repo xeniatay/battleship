@@ -11899,7 +11899,7 @@ var Player = function (_React$Component) {
     key: 'render',
     value: function render() {
       var className = (0, _classnames2.default)('player', {
-        'active': true // this.props.active
+        'active': this.props.active
       });
 
       return _react2.default.createElement(
