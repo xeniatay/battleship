@@ -11569,6 +11569,22 @@ var Grid = function (_React$Component) {
       }
     };
 
+    _this.onMouseEnterTile = function (tile) {
+      var ship = _this.props.ship;
+
+      if (_this.props.setUp) {
+        _this.toggleShipGhost(ship, tile);
+      }
+    };
+
+    _this.onMouseLeaveTile = function (tile) {
+      var ship = _this.props.ship;
+
+      if (_this.props.setUp) {
+        _this.toggleShipGhost(ship, tile);
+      }
+    };
+
     _this.ships = new _ships2.default(_this.props.player);
 
     _this.state = {
@@ -11607,7 +11623,9 @@ var Grid = function (_React$Component) {
         data: tileData,
         key: x + ',' + y,
         showShips: this.props.showShips,
-        onClick: this.onTileClick
+        onClick: this.onTileClick,
+        onMouseEnter: this.onMouseEnterTile,
+        onMouseLeave: this.onMouseLeaveTile
       });
     }
 
@@ -11617,8 +11635,42 @@ var Grid = function (_React$Component) {
      */
 
   }, {
-    key: 'updateTile',
+    key: 'toggleShipGhost',
+    value: function toggleShipGhost(ship, tile) {
+      var _this3 = this;
 
+      var points = this.ships.getPoints(_underscore2.default.extend(ship, {
+        x: tile.x,
+        y: tile.y
+      }));
+
+      var isValidShip = _underscore2.default.every(points, function (p, index) {
+        var tile = _this3.state.grid[p.x][p.y];
+
+        return tile && !tile.id;
+      });
+
+      _underscore2.default.each(points, function (p, index) {
+        var tile = _this3.state.grid[p.x][p.y];
+
+        if (isValidShip) {
+          _this3.updateTileGhost(tile);
+        }
+      });
+    }
+  }, {
+    key: 'updateTileGhost',
+    value: function updateTileGhost(tile) {
+      var grid = _underscore2.default.clone(this.state.grid);
+
+      tile = _underscore2.default.clone(tile);
+      tile.showGhost = !tile.showGhost;
+      grid[tile.x][tile.y] = tile;
+
+      this.setState({
+        grid: grid
+      });
+    }
 
     /**
      * Update tile with game logic
@@ -11626,29 +11678,33 @@ var Grid = function (_React$Component) {
      * 2. If this hit sunk a ship, update all affected tiles
      * @return {void}
      */
+
+  }, {
+    key: 'updateTile',
     value: function updateTile(tile) {
-      var _this3 = this;
+      var _this4 = this;
 
       var grid = _underscore2.default.clone(this.state.grid);
 
       tile = _underscore2.default.clone(tile);
       tile.alreadyHit = tile.hit;
       tile.hit = true;
+      tile.showGhost = false;
       grid[tile.x][tile.y] = tile;
 
       this.setState({
         grid: grid
       }, function () {
         if (tile.id) {
-          var isSunk = _this3.ships.isShipSunk(tile.id, _this3.state.grid);
+          var isSunk = _this4.ships.isShipSunk(tile.id, _this4.state.grid);
 
           if (isSunk) {
-            _this3.ships.sink(tile.id);
-            _this3.updateSunkTiles(tile.id, grid);
+            _this4.ships.sink(tile.id);
+            _this4.updateSunkTiles(tile.id, grid);
           }
         }
 
-        _this3.updateGame(tile);
+        _this4.updateGame(tile);
       });
     }
 
@@ -11697,7 +11753,7 @@ var Grid = function (_React$Component) {
   }, {
     key: 'placeShip',
     value: function placeShip(x, y, ship) {
-      var _this4 = this;
+      var _this5 = this;
 
       var grid = _underscore2.default.clone(this.state.grid);
       var placedShip = {
@@ -11710,7 +11766,7 @@ var Grid = function (_React$Component) {
       var points = this.ships.getPoints(placedShip);
 
       _underscore2.default.each(points, function (p) {
-        grid[p.x][p.y] = _this4.buildTile({
+        grid[p.x][p.y] = _this5.buildTile({
           id: placedShip.id,
           x: p.x,
           y: p.y
@@ -11732,7 +11788,7 @@ var Grid = function (_React$Component) {
   }, {
     key: 'canShipBePlaced',
     value: function canShipBePlaced(x, y, ship) {
-      var _this5 = this;
+      var _this6 = this;
 
       var points = this.ships.getPoints(_underscore2.default.extend(ship, {
         x: x,
@@ -11740,7 +11796,7 @@ var Grid = function (_React$Component) {
       }));
 
       return _underscore2.default.every(points, function (p) {
-        return _this5.isTileValid(p.x, p.y);
+        return _this6.isTileValid(p.x, p.y);
       });
     }
 
@@ -11765,7 +11821,7 @@ var Grid = function (_React$Component) {
   }, {
     key: 'initializeGrid',
     value: function initializeGrid() {
-      var _this6 = this;
+      var _this7 = this;
 
       var grid = [];
       var width = this.props.gridSize[0] || 10;
@@ -11774,7 +11830,7 @@ var Grid = function (_React$Component) {
       _underscore2.default.times(width, function (i) {
         grid[i] = [];
         _underscore2.default.times(height, function (j) {
-          grid[i][j] = _this6.buildTile({ x: i, y: j });
+          grid[i][j] = _this7.buildTile({ x: i, y: j });
         });
       });
 
@@ -11792,7 +11848,8 @@ var Grid = function (_React$Component) {
       return _underscore2.default.extend({
         id: null,
         hit: false,
-        sunk: false
+        sunk: false,
+        showGhost: false
       }, data);
     }
   }]);
@@ -12263,7 +12320,8 @@ var Tile = function (_React$Component) {
       var y = data.y;
       var className = (0, _classnames2.default)('tile', {
         hit: data.hit && data.id,
-        sunk: data.sunk
+        sunk: data.sunk,
+        ghost: data.showGhost
       });
 
       return _react2.default.createElement(
@@ -12271,7 +12329,9 @@ var Tile = function (_React$Component) {
         {
           className: className,
           'data-coords': x + ',' + y,
-          onClick: _underscore2.default.partial(this.props.onClick, data)
+          onClick: _underscore2.default.partial(this.props.onClick, data),
+          onMouseLeave: _underscore2.default.partial(this.props.onMouseLeave, data),
+          onMouseEnter: _underscore2.default.partial(this.props.onMouseEnter, data)
         },
         _react2.default.createElement(
           'span',
@@ -12301,7 +12361,7 @@ exports = module.exports = __webpack_require__(56)();
 
 
 // module
-exports.push([module.i, "body {\n  background: black;\n  font-family: monospace;\n  line-height: 1.5;\n  color: green;\n  font-size: 14px;\n  margin: 20px auto;\n  width: 800px; }\n\nh1 {\n  font-size: 25px; }\n\nh2 {\n  font-size: 20px; }\n\nh3 {\n  font-size: 15px; }\n\n.player {\n  float: left;\n  box-sizing: border-box;\n  padding: 20px;\n  width: 50%; }\n  .player .grid {\n    opacity: 0.5;\n    pointer-events: none;\n    cursor: not-allowed; }\n  .player.active .grid {\n    opacity: 1;\n    pointer-events: all;\n    cursor: default; }\n\n.row {\n  line-height: 0; }\n\n.tile {\n  display: inline-block;\n  position: relative;\n  width: 25px;\n  height: 25px;\n  margin: 1px;\n  border: 1px solid green;\n  overflow: hidden;\n  cursor: pointer; }\n  .tile:hover {\n    border-color: white; }\n  .tile.hit {\n    color: red; }\n  .tile .tile-status {\n    position: absolute;\n    left: 0;\n    width: 25px;\n    line-height: 25px;\n    text-align: center;\n    font-size: 15px; }\n\n.status {\n  color: #AAA;\n  height: 80px;\n  margin: 1em 0; }\n\n.gameplay-instructions {\n  line-height: 2em; }\n\n.options {\n  color: #AAA; }\n", ""]);
+exports.push([module.i, "body {\n  background: black;\n  font-family: monospace;\n  line-height: 1.5;\n  color: green;\n  font-size: 14px;\n  margin: 20px auto;\n  width: 800px; }\n\nh1 {\n  font-size: 25px; }\n\nh2 {\n  font-size: 20px; }\n\nh3 {\n  font-size: 15px; }\n\n.player {\n  float: left;\n  box-sizing: border-box;\n  padding: 20px;\n  width: 50%; }\n  .player .grid {\n    opacity: 0.5;\n    pointer-events: none;\n    cursor: not-allowed; }\n  .player.active .grid {\n    opacity: 1;\n    pointer-events: all;\n    cursor: default; }\n\n.row {\n  line-height: 0; }\n\n.tile {\n  display: inline-block;\n  position: relative;\n  width: 25px;\n  height: 25px;\n  margin: 1px;\n  border: 1px solid green;\n  overflow: hidden;\n  cursor: pointer; }\n  .tile:hover {\n    border-color: white; }\n  .tile.hit {\n    color: red; }\n  .tile.ghost {\n    background: yellow; }\n  .tile .tile-status {\n    position: absolute;\n    left: 0;\n    width: 25px;\n    line-height: 25px;\n    text-align: center;\n    font-size: 15px; }\n\n.status {\n  color: #AAA;\n  height: 80px;\n  margin: 1em 0; }\n\n.gameplay-instructions {\n  line-height: 2em; }\n\n.options {\n  color: #AAA; }\n", ""]);
 
 // exports
 
