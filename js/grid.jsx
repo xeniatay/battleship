@@ -87,22 +87,26 @@ export default class Grid extends React.Component {
       y: tile.y
     }))
 
-    return _.each(points, (p, index) => {
-      console.log('point?', index, points.length)
+    const isValidShip = _.every(points, (p, index) => {
       const tile = this.state.grid[p.x][p.y]
 
-      if (tile) {
+      return tile && !tile.id
+    })
+
+    _.each(points, (p, index) => {
+      const tile = this.state.grid[p.x][p.y]
+
+      if (isValidShip) {
         this.updateTileGhost(tile)
       }
     })
   }
 
   updateTileGhost(tile) {
-    console.log('updaeileghost')
     let grid = _.clone(this.state.grid)
 
     tile = _.clone(tile)
-    tile.showGhost = tile.id ? false : !tile.showGhost
+    tile.showGhost = !tile.showGhost
     grid[tile.x][tile.y] = tile
 
     this.setState({
