@@ -57,6 +57,10 @@ $tile-size: 25px;
     color: red;
   }
 
+  &.ghost {
+    background: yellow;
+  }
+
   .tile-status {
     position: absolute;
     left: 0;

@@ -14,7 +14,8 @@ export default class Tile extends React.Component {
     const y = data.y
     const className = ClassNames('tile', {
       hit: data.hit && data.id,
-      sunk: data.sunk
+      sunk: data.sunk,
+      ghost: data.showGhost
     })
 
     return (
@@ -22,6 +23,8 @@ export default class Tile extends React.Component {
         className={className}
         data-coords={x + ',' + y}
         onClick={_.partial(this.props.onClick, data)}
+        onMouseLeave={_.partial(this.props.onMouseLeave, data)}
+        onMouseEnter={_.partial(this.props.onMouseEnter, data)}
       >
         <span className='tile-status'>
           {data.sunk
