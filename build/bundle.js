@@ -11410,7 +11410,7 @@ var Battleship = function (_React$Component) {
     };
 
     _this.state = {
-      activePlayer: _underscore2.default.random(PLAYERS - 1)
+      activePlayer: 0
     };
     return _this;
   }
