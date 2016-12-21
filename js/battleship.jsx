@@ -29,7 +29,7 @@ class Battleship extends React.Component {
     super(props)
 
     this.state = {
-      activePlayer: _.random(PLAYERS - 1)
+      activePlayer: 0
     }
   }
 
