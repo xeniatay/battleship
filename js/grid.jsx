@@ -41,6 +41,8 @@ export default class Grid extends React.Component {
       key={x + ',' + y}
       showShips={this.props.showShips}
       onClick={this.onTileClick}
+      onMouseEnter={this.onMouseEnterTile}
+      onMouseLeave={this.onMouseLeaveTile}
     />
   }
 
@@ -63,6 +65,51 @@ export default class Grid extends React.Component {
     }
   }
 
+  onMouseEnterTile = (tile) => {
+    const ship = this.props.ship
+
+    if (this.props.setUp) {
+      this.toggleShipGhost(ship, tile)
+    }
+  }
+
+  onMouseLeaveTile = (tile) => {
+    const ship = this.props.ship
+
+    if (this.props.setUp) {
+      this.toggleShipGhost(ship, tile)
+    }
+  }
+
+  toggleShipGhost(ship, tile) {
+    const points = this.ships.getPoints(_.extend(ship, {
+      x: tile.x,
+      y: tile.y
+    }))
+
+    return _.each(points, (p, index) => {
+      console.log('point?', index, points.length)
+      const tile = this.state.grid[p.x][p.y]
+
+      if (tile) {
+        this.updateTileGhost(tile)
+      }
+    })
+  }
+
+  updateTileGhost(tile) {
+    console.log('updaeileghost')
+    let grid = _.clone(this.state.grid)
+
+    tile = _.clone(tile)
+    tile.showGhost = tile.id ? false : !tile.showGhost
+    grid[tile.x][tile.y] = tile
+
+    this.setState({
+      grid
+    })
+  }
+
   /**
    * Update tile with game logic
    * 1. Tile is hit
@@ -75,6 +122,7 @@ export default class Grid extends React.Component {
     tile = _.clone(tile)
     tile.alreadyHit = tile.hit
     tile.hit = true
+    tile.showGhost = false
     grid[tile.x][tile.y] = tile
 
     this.setState({
@@ -206,7 +254,8 @@ export default class Grid extends React.Component {
     return _.extend({
       id: null,
       hit: false,
-      sunk: false
+      sunk: false,
+      showGhost: false
     }, data)
   }
 }
